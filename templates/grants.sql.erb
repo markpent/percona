@@ -4,6 +4,7 @@
 <% if node["platform_family"] == "debian" -%>
 # debian-sys-maint user for administration
 CREATE USER IF NOT EXISTS '<%=@debian_user%>'@'localhost' IDENTIFIED BY '<%= @debian_password %>';
+
   <% [['SELECT', 'mysql.user'], ['SHUTDOWN', '*.*']].each do |priv, loc| %>
 <%= "GRANT #{priv} ON #{loc} TO '#{@debian_user}'@'localhost';" %>
   <% end -%>
@@ -20,7 +21,13 @@ GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO '<%= node["percona"]["ba
 
 # Set the server root password. This should be preseeded by the package installation.
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('<%= @root_password %>');
-
+<% if node["percona"]["create_remote_root"] %>
+#create a non local root user
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY '<%= @root_password %>';
+SET PASSWORD FOR 'root'@'%' = PASSWORD('<%= @root_password %>');
+GRANT ALL ON *.* TO 'root'@'%';
+GRANT GRANT OPTION ON *.* TO 'root'@'%';
+<%end%>
 
 FLUSH PRIVILEGES;
 
