@@ -3,12 +3,12 @@
 
 <% if node["platform_family"] == "debian" -%>
 # debian-sys-maint user for administration
-CREATE USER '#{@debian_user}'@'localhost' IDENTIFIED BY '<%= @debian_password %>';
+CREATE USER IF NOT EXISTS '<%=@debian_user%>'@'localhost' IDENTIFIED BY '<%= @debian_password %>';
   <% [['SELECT', 'mysql.user'], ['SHUTDOWN', '*.*']].each do |priv, loc| %>
 <%= "GRANT #{priv} ON #{loc} TO '#{@debian_user}'@'localhost';" %>
   <% end -%>
 <% end -%>
-
+SET PASSWORD FOR '<%=@debian_user%>'@'localhost' = PASSWORD('<%= @debian_password %>');
 
 <% if node["percona"]["backup"]["configure"] %>
 # Grant permissions for the XtraBackup user
