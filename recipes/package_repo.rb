@@ -21,6 +21,7 @@ when 'debian'
     keyserver node['percona']['apt']['keyserver']
     key node['percona']['apt']['key']
     not_if "adv --list-public-keys --with-fingerprint --with-colons | grep #{node['percona']['apt']['key'][-8, 8]}"
+    retries 5
   end
 
 when 'rhel'
