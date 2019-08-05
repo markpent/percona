@@ -3,10 +3,10 @@
 
 <% if node["platform_family"] == "debian" -%>
 # debian-sys-maint user for administration
+CREATE USER '#{@debian_user}'@'localhost' IDENTIFIED BY '<%= @debian_password %>';
   <% [['SELECT', 'mysql.user'], ['SHUTDOWN', '*.*']].each do |priv, loc| %>
 <%= "GRANT #{priv} ON #{loc} TO '#{@debian_user}'@'localhost';" %>
   <% end -%>
-SET PASSWORD FOR '<%= @debian_user %>'@'localhost' = PASSWORD('<%= @debian_password %>');
 <% end -%>
 
 
@@ -23,3 +23,5 @@ SET PASSWORD FOR 'root'@'localhost' = PASSWORD('<%= @root_password %>');
 
 
 FLUSH PRIVILEGES;
+
+
