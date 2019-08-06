@@ -46,7 +46,7 @@ template '/root/.my.cnf' do
   mode '0600'
   source 'my.cnf.root.erb'
   sensitive true
-  not_if { node['percona']['skip_passwords'] }
+  not_if { node['percona']['skip_passwords'] || node['percona']['root_auth_socket'] }
 end
 
 if server['bind_to']
@@ -164,7 +164,7 @@ template percona['main_config_file'] do
 end
 
 # now let's set the root password only if this is the initial install
-unless node['percona']['skip_passwords']
+unless node['percona']['skip_passwords'] || node['percona']['root_auth_socket']
   root_pw = passwords.root_password
 
   execute 'Update MySQL root password' do # ~FC009 - `sensitive`

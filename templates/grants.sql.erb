@@ -20,7 +20,9 @@ GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO '<%= node["percona"]["ba
 <% end -%>
 
 # Set the server root password. This should be preseeded by the package installation.
+<% unless node['percona']['root_auth_socket'] %>
 SET PASSWORD FOR 'root'@'localhost' = PASSWORD('<%= @root_password %>');
+<% end %>
 <% if node["percona"]["create_remote_root"] %>
 #create a non local root user
 CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY '<%= @root_password %>';
