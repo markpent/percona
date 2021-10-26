@@ -6,10 +6,12 @@ GRANT REPLICATION SLAVE ON *.* TO '<%=node["percona"]["server"]["replication"]["
 <% if node["percona"]["server"]["replication"]["ssl_enabled"] -%>
 ALTER USER '<%=node["percona"]["server"]["replication"]["username"]%>'@'%' REQUIRE SSL;
 <% end -%>
+ALTER USER '<%=node["percona"]["server"]["replication"]["username"]%>'@'%' IDENTIFIED BY '<%= @replication_password %>';
 <% else -%>
 GRANT REPLICATION SLAVE ON *.* TO '<%=node["percona"]["server"]["replication"]["username"]%>'@'%' IDENTIFIED BY '<%= @replication_password %>'<% if node["percona"]["server"]["replication"]["ssl_enabled"] %> REQUIRE SSL<% end %>;
-<% end -%>
 SET PASSWORD FOR '<%=node["percona"]["server"]["replication"]["username"]%>'@'%' = PASSWORD('<%= @replication_password %>');
+<% end -%>
+FLUSH PRIVILEGES;
 
 <% unless node["percona"]["server"]["replication"]["host"].empty? %>
 STOP SLAVE;
