@@ -5,8 +5,9 @@
 
 include_recipe 'percona::package_repo'
 
-node['percona']['client']['packages'].each do |percona_client_pkg|
-  package percona_client_pkg do
-    action node['percona']['client']['package_action'].to_sym
-  end
+pkgs = node['percona']['client']['packages'].empty? ? percona_client_packages : node['percona']['client']['packages']
+pkgs << percona_devel_package if node['percona']['client']['install_devel_package']
+
+package pkgs do
+  action node['percona']['client']['package_action'].to_sym
 end

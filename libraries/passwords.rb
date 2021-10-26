@@ -20,7 +20,7 @@ class Chef
         # load password from the vault
         pwds = ChefVault::Item.load(bag, item) if vault
         # load the encrypted data bag item, using a secret if specified
-        pwds = Chef::EncryptedDataBagItem.load(@bag, item, secret) unless vault
+        pwds = Chef::EncryptedDataBagItem.load(@bag, item, secret) unless vault # rubocop:disable Chef/Modernize/DatabagHelpers
         # now, let's look for the user password
         password = pwds[user]
       rescue
@@ -50,7 +50,7 @@ class Chef
       find_password @mysql_item, 'old_passwords', node_server['old_passwords']
     end
 
-    # password for user responsbile for replicating in master/slave environment
+    # password for user responsbile for replicating in source/replica environment
     def replication_password
       find_password @mysql_item, node_server['replication']['username'], node_server['replication']['password']
     end

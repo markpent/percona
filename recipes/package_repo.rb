@@ -16,18 +16,53 @@ when 'debian'
 
   apt_repository 'percona' do
     uri node['percona']['apt']['uri']
-    distribution node['lsb']['codename']
     components ['main']
     keyserver node['percona']['apt']['keyserver']
     key node['percona']['apt']['key']
-    not_if "apt-key adv --list-public-keys --with-fingerprint --with-colons | grep #{node['percona']['apt']['key'][-8, 8]}"
+    #not_if "apt-key adv --list-public-keys --with-fingerprint --with-colons | grep #{node['percona']['apt']['key'][-8, 8]}"
     retries 5
   end
 
+  if node['percona']['version'].to_i >= 8
+    node['percona']['repositories'].each do |repo|
+      apt_repository "percona-#{repo}" do
+        uri "http://repo.percona.com/#{repo}/apt"
+        components ['main']
+        keyserver node['percona']['apt']['keyserver']
+        key node['percona']['apt']['key']
+      end
+    end
+  end
+
 when 'rhel'
+  dnf_module 'mysql' do
+    action :disable
+    only_if { node['platform_version'].to_i >= 8 }
+  end
+
   yum_repository 'percona' do
     description node['percona']['yum']['description']
-    baseurl node['percona']['yum']['baseurl']
+    baseurl "#{node['percona']['yum']['baseurl']}/$basearch"
+    gpgkey node['percona']['yum']['gpgkey']
+    gpgcheck node['percona']['yum']['gpgcheck']
+    sslverify node['percona']['yum']['sslverify']
+  end
+
+  if node['percona']['version'].to_i >= 8
+    node['percona']['repositories'].each do |repo|
+      yum_repository "percona-#{repo}" do
+        description node['percona']['yum']['description'] + ' - ' + repo
+        baseurl "http://repo.percona.com/#{repo}/yum/release/$releasever/RPMS/$basearch"
+        gpgkey node['percona']['yum']['gpgkey']
+        gpgcheck node['percona']['yum']['gpgcheck']
+        sslverify node['percona']['yum']['sslverify']
+      end
+    end
+  end
+
+  yum_repository 'percona-noarch' do
+    description node['percona']['yum']['description'] + ' - noarch'
+    baseurl "#{node['percona']['yum']['baseurl']}/noarch"
     gpgkey node['percona']['yum']['gpgkey']
     gpgcheck node['percona']['yum']['gpgcheck']
     sslverify node['percona']['yum']['sslverify']
