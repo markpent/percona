@@ -36,8 +36,8 @@ SET PASSWORD FOR 'root'@'localhost' = PASSWORD('<%= @root_password %>');
 <% end %>
 <% if node["percona"]["create_remote_root"] %>
 #create a non local root user
-CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED BY '<%= @root_password %>';
-ALTER USER 'root'@'%' IDENTIFIED BY '<%= @root_password %>';
+CREATE USER IF NOT EXISTS 'root'@'%' IDENTIFIED<%=@remote_password_authentication_plugin_statement%> BY '<%= @root_password %>';
+ALTER USER 'root'@'%' IDENTIFIED<%=@remote_password_authentication_plugin_statement%> BY '<%= @root_password %>';
 GRANT ALL ON *.* TO 'root'@'%';
 GRANT GRANT OPTION ON *.* TO 'root'@'%';
 <%end%>

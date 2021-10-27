@@ -12,7 +12,10 @@ replication_sql = server['replication']['replication_sql']
 # define access grants
 template replication_sql do
   source 'replication.sql.erb'
-  variables(replication_password: passwords.replication_password)
+  variables(
+    replication_password: passwords.replication_password,
+    remote_password_authentication_plugin_statement: passwords.remote_password_authentication_plugin_statement
+  )
   owner 'root'
   group 'root'
   mode '0600'

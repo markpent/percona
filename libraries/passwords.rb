@@ -61,6 +61,15 @@ class Chef
       find_password @mysql_item, backup['username'], backup['password']
     end
 
+    #if the remote_password_authentication_plugin is set, this will be the SQL snippet to specify that authentication plugin when adding a user
+    def remote_password_authentication_plugin_statement
+      if node['percona']['remote_password_authentication_plugin'].nil? 
+        ""
+      else
+        " WITH #{node['percona']['remote_password_authentication_plugin']} "
+      end
+    end
+
     private
 
     # helper
