@@ -475,7 +475,9 @@ myisam_max_sort_file_size = <%= node["percona"]["server"]["myisam_max_sort_file_
 # If a table has more than one index, MyISAM can use more than one
 # thread to repair them by sorting in parallel. This makes sense if you
 # have multiple CPUs and plenty of memory.
+<%- if node["percona"]["version"].to_f < 8.03 %>
 myisam_repair_threads = <%= node["percona"]["server"]["myisam_repair_threads"] %>
+<% end %>
 
 <%- if node["percona"]["version"].to_f < 5.7 %>
 # Automatically check and repair not properly closed MyISAM tables.
