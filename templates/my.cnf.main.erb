@@ -476,6 +476,7 @@ myisam_max_sort_file_size = <%= node["percona"]["server"]["myisam_max_sort_file_
 # thread to repair them by sorting in parallel. This makes sense if you
 # have multiple CPUs and plenty of memory.
 <%- if node["percona"]["version"].to_f < 8.03 %>
+#version = <%=node["percona"]["version"].to_f %>
 myisam_repair_threads = <%= node["percona"]["server"]["myisam_repair_threads"] %>
 <% end %>
 
