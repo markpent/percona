@@ -27,6 +27,9 @@ end
 
 root_pass = passwords.root_password.to_s
 root_pass = Shellwords.escape(root_pass).prepend('-p') unless root_pass.empty?
+if node['percona']['root_auth_socket']
+  root_pass = '' #the root account does not need a password
+end
 
 execute 'mysql-set-replication' do
   command "/usr/bin/mysql #{root_pass} < #{replication_sql}"
