@@ -374,7 +374,7 @@ relay-log = <%= node["percona"]["server"]["relay_log"] %>
 expire_logs_days = <%= node["percona"]["server"]["expire_logs_days"] %>
 binlog_format    = <%= node["percona"]["server"]["binlog_format"] %>
 <% else %>
-binlog_expire_log_seconds = <%= node["percona"]["server"]["expire_logs_days"].to_i * 24 * 60 * 60 %>
+binlog_expire_logs_seconds = <%= node["percona"]["server"]["expire_logs_days"].to_i * 24 * 60 * 60 %>
 <% end %>
 max_binlog_size  = <%= node["percona"]["server"]["max_binlog_size"] %>
 <%- if node["percona"]["version"].to_f < 8.4 %>
