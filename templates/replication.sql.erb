@@ -14,25 +14,25 @@ SET PASSWORD FOR '<%=node["percona"]["server"]["replication"]["username"]%>'@'%'
 FLUSH PRIVILEGES;
 
 <% unless node["percona"]["server"]["replication"]["host"].empty? %>
-STOP SLAVE;
-CHANGE MASTER TO
-  MASTER_HOST='<%= node["percona"]["server"]["replication"]["host"] %>',
-  MASTER_PORT=<%= node["percona"]["server"]["replication"]["port"] %>,
-  MASTER_USER='<%= node["percona"]["server"]["replication"]["username"] %>',
+STOP REPLICA;
+CHANGE REPLICATION SOURCE TO
+  SOURCE_HOST='<%= node["percona"]["server"]["replication"]["host"] %>',
+  SOURCE_PORT=<%= node["percona"]["server"]["replication"]["port"] %>,
+  SOURCE_USER='<%= node["percona"]["server"]["replication"]["username"] %>',
   <% if node["percona"]["server"]["replication"]["ssl_enabled"] %>
-  MASTER_SSL=1,
-  MASTER_SSL_CA='/etc/mysql/ssl/cacert.pem',
+  SOURCE_SSL=1,
+  SOURCE_SSL_CA='/etc/mysql/ssl/cacert.pem',
   <% if node['percona']['server']['role'].include?('replica') || node['percona']['server']['role'].include?('slave') %>
-  MASTER_SSL_CERT='/etc/mysql/ssl/client-cert.pem',
-  MASTER_SSL_KEY='/etc/mysql/ssl/client-key.pem',
+  SOURCE_SSL_CERT='/etc/mysql/ssl/client-cert.pem',
+  SOURCE_SSL_KEY='/etc/mysql/ssl/client-key.pem',
   <% elsif node['percona']['server']['role'].include?('source') || node['percona']['server']['role'].include?('master') %>
-  MASTER_SSL_CERT='/etc/mysql/ssl/server-cert.pem',
-  MASTER_SSL_KEY='/etc/mysql/ssl/server-key.pem',
+  SOURCE_SSL_CERT='/etc/mysql/ssl/server-cert.pem',
+  SOURCE_SSL_KEY='/etc/mysql/ssl/server-key.pem',
   <% end %>
   <% end %>
   <% if node["percona"]["server"]["replication"]["auto_position"] %>
-  MASTER_AUTO_POSITION=1,
+  SOURCE_AUTO_POSITION=1,
   <%end%>
-  MASTER_PASSWORD='<%= @replication_password %>';
-START SLAVE;
+  SOURCE_PASSWORD='<%= @replication_password %>';
+START REPLICA;
 <% end %>
