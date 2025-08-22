@@ -22,7 +22,7 @@ template '/etc/mysql/grants.sql' do
 end
 
 # execute access grants
-if passwords.root_password && !passwords.root_password.empty?
+if passwords.root_password && !passwords.root_password.empty? && node['percona']['root_auth_socket'] != true
   # Intent is to check whether the root_password works, and use it to
   # load the grants if so. If not, try loading without a password
   # and see if we get lucky
